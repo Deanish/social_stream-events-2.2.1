@@ -1,0 +1,135 @@
+//= require jquery.tipsy
+
+SocialStream.Calendar = (function(SS, $, undefined){
+  var eventsPath;
+
+  var element = function(){
+    return $("#sidebar_calendar");
+  }
+  var eventElementRegExp = new RegExp('day_(..?)_(..?)_(..?.?.?)');
+
+  var eventElementMatch = function(el){
+    return eventElementRegExp.exec($(el).attr('id'));
+  }
+
+  var eventElementDate = function(el) {
+    var m = eventElementMatch(el);
+
+    if(m == null) return;
+
+    return new Date(m[3], (m[2]-1), m[1], 23, 59, 59);
+  }
+
+  var eventElement = function(date) {
+    return $('#day_' + date.getDate() + '_' + (date.getMonth()+1) + '_' + date.getFullYear())
+  }
+
+  var show = function(){
+    var cal = $('#sidebar_calendar');
+    var calStart = cal.attr('data-start');
+    var calEnd = cal.attr('data-end');
+    eventsPath = cal.attr('data-path');
+
+    var now = new Date();
+
+    eventElement(now).addClass('today');
+
+
+    cal.find('#days td').each(function(index, domEl){
+      var d = eventElementDate(domEl)
+
+      if(d < now) $(domEl).addClass('past');
+      if(d.getMonth() != now.getMonth() && d > now) $(domEl).addClass('next_month');
+    });
+
+    $.ajax({
+      dataType: 'json',
+      cache: false,
+      url: eventsPath,
+      data: {
+        start: calStart,
+        end: calEnd
+      },
+
+      success: initBusyEvents
+    });
+  }
+
+  var initBusyEvents = function(events) {
+    $.each(events, function(i, event) {
+      var start = new Date(event.start); // This applies TZ
+      var end = new Date(event.end);
+
+      for(loopTime=start.getTime(); loopTime <= end.getTime(); loopTime+=86400000) {
+        var d = new Date(loopTime);
+        var domEl = eventElement(d);
+
+        domEl.addClass("busy");
+      }
+
+      element().find('.busy').click(function(e) {
+        e.preventDefault();
+
+        showBusyModal($(this));
+      });
+    })
+  }
+
+  var showBusyModal = function(el) {
+    if (! el.attr('data-loaded')) {
+      createBusyModal(el);
+    }
+
+    $('#modal-' + el.attr('id')).modal('show');
+  };
+
+  var createBusyModal = function(el) {
+    var modal = $('#modal-sidebar_calendar').clone();
+
+    modal.attr('id', 'modal-' + el.attr('id'));
+    modal.find(".modal-header h3").html(busyTitle(el));
+    modal.find("button.view-calendar").click(function() {
+      document.location.href = el.find('a').attr('href');
+    });
+
+    loadBusyContent(el);
+
+    modal.appendTo($('body'));
+
+    modal.modal({ dynamic: true });
+
+    el.attr('data-loaded', true);
+  };
+
+  var busyTitle = function(el){
+    var date = eventElementDate(el);
+
+    return I18n.t('event.popover.title', { date: I18n.l('date.formats.long', date) } );
+  };
+
+  var loadBusyContent = function(el){
+    var startDate = eventElementDate(el)
+    startDate.setHours(0);
+    startDate.setMinutes(0);
+    startDate.setSeconds(0);
+    var endDate   = eventElementDate(el)
+
+    $.ajax({
+      dataType: "script",
+      url: eventsPath,
+      data: {
+        // use UNIX timestamps
+        start: Math.round(startDate.getTime() / 1000),
+        end:   Math.round(endDate.getTime() / 1000),
+        day: el.attr('id')
+      }
+    });
+  }
+
+  return {
+    show: show,
+    element: element,
+    eventElement: eventElement
+  }
+
+})(SocialStream, jQuery);

@@ -1,0 +1,57 @@
+---
+es:
+  activerecord:
+    attributes:
+      event:
+        frequency: Repetición
+        room: Espacio
+        title: Título
+      room:
+        name: Nombre
+    errors:
+      models:
+        room:
+          attributes:
+            name:
+              taken: está repetido
+    models:
+      event: evento
+      room: espacio
+  boxy:
+    close_text: '[cerrar]'
+  event:
+    activity_action:
+      follow: Me lo apunto
+      sentence:
+        one: '%{followers} follows this'
+        other: '%{followers} follow this'
+      unfollow: Desapuntar
+    calendar: Calendario
+    confirm_delete: ¿Borrar evento?
+    modal:
+      view_in_calendar: Ver en el calendario
+    name: evento
+    new:
+      title: Nuevo evento
+    one: un evento
+    other: eventos
+    popover:
+      title: Eventos el %{date}
+    poster:
+      button: Subir
+      update: Subir cartel
+    title:
+      one: Evento
+      other: Eventos
+    wall_post: 'Publicó un evento: %{title}'
+  header:
+    icon:
+      calendar: Calendar
+  room:
+    confirm_delete: ¿Borrar espacio?
+    delete: Borrar
+    settings:
+      description: Salas disponibles para la realización de eventos
+      title: Espacios
+    watermark:
+      name: Nuevo espacio

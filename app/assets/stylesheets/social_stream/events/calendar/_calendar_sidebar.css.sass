@@ -1,0 +1,50 @@
+@import "fullcalendar"
+
+      
+#month_top,
+#month_bottom
+  text-align: center
+
+
+#month_top
+  border-bottom: 1px solid #dbdbdb
+
+
+#month_bottom
+  border-top: 1px solid #dbdbdb
+
+
+#month_top.past
+  @include opacity (70)
+
+
+#days
+  tbody
+    tr
+      td
+        text-align: right
+        a
+          color: $gray
+          text-decoration: none
+      .today
+        @include border-radius(15px)
+        border: 1px solid $blue !important
+        a
+          color: $blue 
+      .busy
+        font-weight: bold
+        @include border-radius(5px)
+        border: 1px solid #c4c4c4
+        background-color: $white
+      .past
+        @include opacity (70)
+      .other_month
+        @include opacity (70)
+
+.fc-content
+  .fc-cell-overlay,
+    @include opacity (40)
+    color: $blue
+
+.fc-state-highlight
+  background-color: rgba(4,156,219,0.2)

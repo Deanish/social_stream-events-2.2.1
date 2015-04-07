@@ -1,0 +1,3 @@
+= Social Stream Events
+
+This gem will change to support scheduled events
