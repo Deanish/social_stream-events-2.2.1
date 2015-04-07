@@ -1,3 +1,1 @@
-= Social Stream Events
-
-This gem will change to support scheduled events
+Social Stream Events-2.2.1
